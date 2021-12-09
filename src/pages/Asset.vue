@@ -3,8 +3,8 @@
     <q-card>
       <div class="column">
         <div class="self-center">
-          <q-btn color="primary" label="添加"/>
-          <q-btn color="primary" label="编辑"/>
+          <q-btn color="primary" label="添加" @click="addSelected"/>
+          <q-btn color="primary" label="编辑" @click="editSelected"/>
           <q-btn color="primary" label="删除" @click="deleteSelected"/>
         </div>
       </div>
@@ -28,6 +28,7 @@ import { BACKEND } from 'src/consts';
 import { getToken } from 'components/util';
 import { PamsAsset, PamsResponse, PamsResponseCode } from 'components/models';
 import { Notify } from 'quasar';
+import AssetDialog from 'components/AssetDialog.vue';
 
 
 export default defineComponent({
@@ -38,7 +39,7 @@ export default defineComponent({
         { name: 'id', label: '资产编号', field: 'id', sortable: true },
         { name: 'label', label: '标签', field: 'label', sortable: true },
         { name: 'desc', label: '价值', field: 'value', sortable: true },
-        { name: 'desc', label: '介绍', field: 'description' }
+        { name: 'desc', label: '简介', field: 'description' }
       ],
       assets: [] as PamsAsset[],
       selected: [] as PamsAsset[]
@@ -59,6 +60,61 @@ export default defineComponent({
           Notify.create(`删除结果：${resp.msg}`);
           this.updateList();
         }).catch(e => console.error(e));
+      } else {
+        Notify.create('请选中要删除的项目');
+      }
+    },
+    addSelected() {
+      this.$q.dialog({
+        component: AssetDialog,
+        componentProps: {
+          title: '添加',
+          id: '',
+          label: '',
+          desc: '',
+          value: ''
+        }
+      }).onOk((payload) => {
+        fetch(`${BACKEND}/api/asset/add`, {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+            'Token': getToken()
+          },
+          body: JSON.stringify(payload)
+        }).then(r => r.json()).then(d => {
+          let resp = d as PamsResponse<undefined>;
+          Notify.create(`添加结果：${resp.msg}`);
+          this.updateList();
+        }).catch(e => console.error(e));
+      });
+    },
+    editSelected() {
+      if (this.selected.length > 0) {
+        const data = this.selected[0];
+        this.$q.dialog({
+          component: AssetDialog,
+          componentProps: {
+            title: '编辑',
+            id: data.id.toString(),
+            label: data.label,
+            desc: data.description,
+            value: data.value.toString()
+          }
+        }).onOk((payload) => {
+          fetch(`${BACKEND}/api/asset/edit/${data.id}`, {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json',
+              'Token': getToken()
+            },
+            body: JSON.stringify(payload)
+          }).then(r => r.json()).then(d => {
+            let resp = d as PamsResponse<undefined>;
+            Notify.create(`编辑结果：${resp.msg}`);
+            this.updateList();
+          }).catch(e => console.error(e));
+        });
       } else {
         Notify.create('请选中要删除的项目');
       }

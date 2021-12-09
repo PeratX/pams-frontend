@@ -11,7 +11,7 @@ export enum PamsRole {
 }
 
 export type PamsAsset = {
-  id: string,
+  id: number,
   label: string,
   value: number,
   description: string
