@@ -84,7 +84,6 @@ export default defineComponent({
       if (this.loggedIn && resp.data) {
         this.username = resp.data.name;
       }
-      console.log(resp);
     }).catch(e => console.error(e));
   }
 });

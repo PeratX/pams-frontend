@@ -10,6 +10,13 @@ export enum PamsRole {
   ADMIN
 }
 
+export type PamsAsset = {
+  id: string,
+  label: string,
+  value: number,
+  description: string
+}
+
 export type PamsResponse<T> = {
   code: PamsResponseCode,
   msg: string,
