@@ -50,14 +50,19 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
   {
-    title: 'Home',
+    title: '主页',
     icon: 'home',
     to: '/'
   },
   {
-    title: 'Assets',
-    icon: 'settings',
+    title: '仓库',
+    icon: 'warehouse',
     to: '/assets'
+  },
+  {
+    title: '日志',
+    icon: 'article',
+    to: '/logs'
   }
 ];
 

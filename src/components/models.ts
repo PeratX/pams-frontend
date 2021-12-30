@@ -18,6 +18,18 @@ export type PamsAsset = {
   amount: number
 }
 
+export type PamsLog = {
+  id: number,
+  amount: number,
+  action: number,
+  message: string,
+  user: {
+    name: string,
+    role: number
+  },
+  asset: PamsAsset
+}
+
 export type PamsResponse<T> = {
   code: PamsResponseCode,
   msg: string,
