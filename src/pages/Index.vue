@@ -6,7 +6,7 @@
         <div class="column">
           <q-input v-model="usernameInput" label="用户名"/>
           <q-input v-model="password" type="password" label="密码"/>
-          <div class="self-center">
+          <div class="self-center login-btn">
             <q-btn color="primary" label="登录系统" @click="login"/>
           </div>
         </div>
@@ -18,7 +18,7 @@
         <div class="row">
           <div class="column">
             <q-input v-model="username" disable label="用户名"/>
-            <div class="self-center">
+            <div class="self-center login-btn">
               <q-btn color="primary" label="注销" @click="logout"/>
             </div>
           </div>
@@ -27,6 +27,12 @@
     </q-card>
   </q-page>
 </template>
+
+<style>
+.login-btn {
+  margin-top: 16px;
+}
+</style>
 
 <script lang="ts">
 import { defineComponent } from 'vue';

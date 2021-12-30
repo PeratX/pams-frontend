@@ -2,15 +2,17 @@
   <q-page class="row items-center justify-evenly">
     <q-card>
       <div class="column">
-        <div class="self-center">
-          <q-btn color="primary" label="添加" @click="addSelected"/>
-          <q-btn color="primary" label="编辑" @click="editSelected"/>
-          <q-btn color="primary" label="删除" @click="deleteSelected"/>
+        <div class="self-center btn-div">
+          <q-btn class="action-btn" color="primary" label="添加" @click="addSelected" />
+          <q-btn class="action-btn" color="primary" label="编辑" @click="editSelected" />
+          <q-btn class="action-btn" color="primary" label="删除" @click="deleteSelected" />
+          <q-btn class="action-btn" color="primary" label="入库" @click="inSelected" />
+          <q-btn class="action-btn" color="primary" label="出库" @click="outSelected" />
         </div>
       </div>
       <div class="q-pa-md">
         <q-table
-          title="资产"
+          title="货品"
           :rows="assets"
           :columns="columns"
           selection="single"
@@ -21,6 +23,16 @@
     </q-card>
   </q-page>
 </template>
+<style>
+.action-btn {
+  margin-right: 4px;
+  margin-left: 4px;
+}
+
+.btn-div {
+  margin-top: 16px;
+}
+</style>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -36,10 +48,11 @@ export default defineComponent({
   data() {
     return {
       columns: [
-        { name: 'id', label: '资产编号', field: 'id', sortable: true },
+        { name: 'id', label: '货品编号', field: 'id', sortable: true },
         { name: 'label', label: '标签', field: 'label', sortable: true },
-        { name: 'desc', label: '价值', field: 'value', sortable: true },
-        { name: 'desc', label: '简介', field: 'description' }
+        { name: 'value', label: '价值', field: 'value', sortable: true },
+        { name: 'desc', label: '简介', field: 'description' },
+        { name: 'amount', label: '库存数', field: 'amount' }
       ],
       assets: [] as PamsAsset[],
       selected: [] as PamsAsset[]
@@ -72,7 +85,10 @@ export default defineComponent({
           id: '',
           label: '',
           desc: '',
-          value: ''
+          value: '',
+          amount: '',
+          editable: true,
+          isAdd: true,
         }
       }).onOk((payload) => {
         fetch(`${BACKEND}/api/asset/add`, {
@@ -99,7 +115,10 @@ export default defineComponent({
             id: data.id.toString(),
             label: data.label,
             desc: data.description,
-            value: data.value.toString()
+            value: data.value.toString(),
+            amount: data.amount.toString(),
+            editable: true,
+            isAdd: false
           }
         }).onOk((payload) => {
           fetch(`${BACKEND}/api/asset/edit/${data.id}`, {
@@ -112,6 +131,74 @@ export default defineComponent({
           }).then(r => r.json()).then(d => {
             let resp = d as PamsResponse<undefined>;
             Notify.create(`编辑结果：${resp.msg}`);
+            this.updateList();
+          }).catch(e => console.error(e));
+        });
+      } else {
+        Notify.create('请选中要删除的项目');
+      }
+    },
+    inSelected() {
+      if (this.selected.length > 0) {
+        const data = this.selected[0];
+        this.$q.dialog({
+          component: AssetDialog,
+          componentProps: {
+            title: '入库',
+            id: data.id.toString(),
+            label: data.label,
+            desc: data.description,
+            value: data.value.toString(),
+            amount: data.amount.toString(),
+            editable: false,
+            isAdd: true
+          }
+        }).onOk((payload) => {
+          fetch(`${BACKEND}/api/asset/warehouse/${data.id}`, {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json',
+              'Token': getToken()
+            },
+            // eslint-disable-next-line
+            body: JSON.stringify({ id: data.id, amount: payload.amount, action: 0 })
+          }).then(r => r.json()).then(d => {
+            let resp = d as PamsResponse<undefined>;
+            Notify.create(`入库结果：${resp.msg}`);
+            this.updateList();
+          }).catch(e => console.error(e));
+        });
+      } else {
+        Notify.create('请选中要删除的项目');
+      }
+    },
+    outSelected() {
+      if (this.selected.length > 0) {
+        const data = this.selected[0];
+        this.$q.dialog({
+          component: AssetDialog,
+          componentProps: {
+            title: '出库',
+            id: data.id.toString(),
+            label: data.label,
+            desc: data.description,
+            value: data.value.toString(),
+            amount: data.amount.toString(),
+            editable: false,
+            isAdd: true
+          }
+        }).onOk((payload) => {
+          fetch(`${BACKEND}/api/asset/warehouse/${data.id}`, {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json',
+              'Token': getToken()
+            },
+            // eslint-disable-next-line
+            body: JSON.stringify({ id: data.id, amount: payload.amount, action: 1 })
+          }).then(r => r.json()).then(d => {
+            let resp = d as PamsResponse<undefined>;
+            Notify.create(`出库结果：${resp.msg}`);
             this.updateList();
           }).catch(e => console.error(e));
         });

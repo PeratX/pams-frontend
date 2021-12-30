@@ -14,7 +14,8 @@ export type PamsAsset = {
   id: number,
   label: string,
   value: number,
-  description: string
+  description: string,
+  amount: number
 }
 
 export type PamsResponse<T> = {

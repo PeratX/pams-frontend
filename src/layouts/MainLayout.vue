@@ -12,10 +12,10 @@
         />
 
         <q-toolbar-title>
-          PeratX Anything Management System
+          仓库货品管理系统（PAMS）
         </q-toolbar-title>
 
-        <div>build #1</div>
+        <div>build #2</div>
       </q-toolbar>
     </q-header>
 

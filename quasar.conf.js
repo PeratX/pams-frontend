@@ -145,7 +145,7 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: `Pams`,
+        name: `PAMS`,
         short_name: `Pams`,
         description: `Pams Frontend`,
         display: 'standalone',
