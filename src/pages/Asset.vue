@@ -169,7 +169,7 @@ export default defineComponent({
           }).catch(e => console.error(e));
         });
       } else {
-        Notify.create('请选中要删除的项目');
+        Notify.create('请选中要入库的项目');
       }
     },
     outSelected() {
@@ -203,7 +203,7 @@ export default defineComponent({
           }).catch(e => console.error(e));
         });
       } else {
-        Notify.create('请选中要删除的项目');
+        Notify.create('请选中要出库的项目');
       }
     },
     updateList() {
